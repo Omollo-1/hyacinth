@@ -1,0 +1,39 @@
+project: hyacinth-watch
+
+aoi:
+  name: Kisumu Bay pilot (Winam Gulf, Lake Victoria)
+  # lon_min, lat_min, lon_max, lat_max. APPROXIMATE: verify and adjust in notebook 01.
+  pilot_bbox: [34.65, -0.20, 34.90, 0.00]
+  # Full Winam Gulf, for scale-up once the pilot works. Also approximate.
+  full_bbox: [34.10, -0.50, 35.00, 0.05]
+  # Optional fixed lake-extent polygon (GeoJSON). Preferred over the image-derived mask.
+  water_polygon: null
+
+stac:
+  url: https://planetarycomputer.microsoft.com/api/stac/v1
+  collection: sentinel-2-l2a
+  max_cloud: 30
+  date_range: ["2023-01-01", "2025-12-31"]
+
+bands: [B02, B03, B04, B08, B11]
+
+weak_labels:
+  ndvi_min: 0.25     # starting points only: calibrate from histograms in notebook 02
+  fai_min: 0.02
+  water_min_freq: 0.5
+
+chips:
+  size: 256
+  stride: 256
+  min_valid: 0.9
+  min_water: 0.2
+
+training:
+  encoder: resnet34
+  weights: imagenet
+  epochs: 30
+  batch_size: 16
+  lr: 0.0003
+  neg_ratio: 2.0
+  block_m: 5000      # spatial split block size in metres
+  threshold: 0.5
